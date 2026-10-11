@@ -16,6 +16,7 @@ from grader.grade import grade
 from grader.mutants import MUTANTS
 from reference.bundle import write_bundle
 from report.make_report import build_report
+from report.viewer import build_viewer
 
 ROOT = Path(__file__).resolve().parent.parent
 RUNS_DIR = ROOT / "results" / "demo_runs"
@@ -70,6 +71,7 @@ def main():
                         "scores": {k: scores[k] for k in ("overall", "unit_score", "program_score", "robustness")},
                     }
                     (run_dir / "meta.json").write_text(json.dumps(meta, indent=1))
+                    build_viewer(run_dir)
                     print(f"{run_id}: {scores['overall']:.3f}  ({machine} + {', '.join(mutants) or 'no bugs'})")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     build_report(RUNS_DIR, OUT, title="CHIP-8 Eval — DEMO report (synthetic models)", intro=INTRO)

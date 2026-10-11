@@ -7,7 +7,7 @@ in the score, and instrumented so you can see *where* each model breaks.
 
 > **Status (2026-10-11):** the environment, hidden test suites, grader (validated against 66
 > mutants), agent harness, variant spec and report generator are built and tested
-> (`pytest`: 161 tests, including Docker isolation tests). **No real model has been evaluated
+> (`pytest`: over 160 tests, including Docker isolation tests). **No real model has been evaluated
 > yet**: that needs API keys (see [Running a real eval](#running-a-real-eval)). The report
 > format is shown with synthetic data in [`report/demo/REPORT.md`](report/demo/REPORT.md).
 
@@ -215,12 +215,15 @@ Useful commands (run from the repo root with the venv's `python`):
 5. Report: `python -m report.make_report`.
 
 Each run leaves `results/runs/<run_id>/` with `transcript.jsonl` (every message and tool call),
-`emulator.py`, `outputs.json`, `scores.json` and `meta.json`.
+`emulator.py`, `outputs.json`, `scores.json`, `meta.json`, and `viewer.html`: a self-contained page
+that lists every hidden test (failures first) with the expected and actual machine state and
+candidate | reference | diff frames.
 
 ## Possible extensions
 
-- Run agent sandboxes as Kubernetes Jobs for parallelism.
-- A small viewer that replays a candidate's frames next to the reference.
+- Run agent sandboxes as Kubernetes Jobs for parallelism. Note: the local Docker Desktop cluster
+  does not enforce NetworkPolicies, so isolation needs another mechanism (see `DECISIONS.md`, K1–K3).
+- Live replay in the viewer (step a ROM cycle by cycle in the browser); today it shows checkpoints.
 - A "vendor agent" track: off-the-shelf coding agents in the same sandbox, to separate model
   ability from scaffolding.
 - A SUPER-CHIP tier if models saturate the canonical task.

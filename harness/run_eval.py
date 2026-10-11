@@ -5,7 +5,7 @@
     python -m harness.run_eval --models scripted-reference      # pipeline smoke test, no API key
 
 Each run writes results/runs/<run_id>/: transcript.jsonl, emulator.py, outputs.json,
-scores.json, meta.json. Runs whose scores.json already exists are skipped (resumable);
+scores.json, meta.json, and viewer.html (browse every test's state and frames). Runs whose scores.json already exists are skipped (resumable);
 pass --force to redo them.
 """
 
@@ -27,6 +27,7 @@ from grader.grade import grade, summary_line
 from harness.agent_loop import Budget, Transcript, run_episode
 from harness.providers import Price, ProviderError, make_client
 from harness.sandbox import Sandbox, ensure_images
+from report.viewer import build_viewer
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results" / "runs"
@@ -131,6 +132,7 @@ def run_one(model_cfg, variant, k, defaults, tag=None, force=False, retry_errors
     scores = grade(run_dir / "emulator.py", variant, out_dir=run_dir, mode="docker")
     meta["scores"] = {k: scores[k] for k in ("overall", "unit_score", "program_score", "robustness")}
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=1))
+    build_viewer(run_dir)
     end = episode["end_reason"] if episode else "error"
     log(f"[{run_id}] {end}; {summary_line(scores)}")
     return scores

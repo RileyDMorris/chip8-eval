@@ -68,3 +68,17 @@ def test_report_with_no_runs(tmp_path):
     text = build_report(tmp_path / "runs", tmp_path / "REPORT.md").read_text()
     assert "No graded runs found yet" in text
     assert "## Grader validation (mutants)" in text
+
+
+def test_viewer_embeds_every_test(tmp_path):
+    from report.viewer import build_viewer
+
+    runs = tmp_path / "runs"
+    wrap = next(m for m in MUTANTS if m.name == "display_wrap_not_clip")
+    scores = make_run(runs, tmp_path, "buggy", "canonical", 1, wrap.patches)
+    page = build_viewer(runs / "buggy__canonical__r1").read_text()
+    data = json.loads(page.split("const DATA = ", 1)[1].split(";\n", 1)[0])
+    assert len(data["tests"]) == scores["total_tests"]
+    failed = [t for t in data["tests"] if not t["passed"]]
+    assert failed and data["tests"][0]["passed"] is False      # failures listed first
+    assert "</script>" not in page.split("const DATA = ", 1)[1].split(";\n", 1)[0]

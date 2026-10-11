@@ -409,23 +409,25 @@ Before any model runs, the grader is checked against deliberately broken copies 
 
 ## All runs
 
-| Run | End | Tool calls | Time | Cost | Overall |
-|---|---|---|---|---|---|
-| `demo-careful__canonical__r1` | submitted | 77 | 61 min | $2.39 | 100.0% |
-| `demo-careful__canonical__r2` | max_tool_calls | 35 | 22 min | $2.51 | 100.0% |
-| `demo-careful__canonical__r3` | max_tool_calls | 56 | 65 min | $8.06 | 95.4% |
-| `demo-memorizer__canonical__r1` | max_tool_calls | 82 | 75 min | $10.92 | 100.0% |
-| `demo-memorizer__canonical__r2` | submitted | 122 | 26 min | $8.29 | 98.7% |
-| `demo-memorizer__canonical__r3` | submitted | 134 | 19 min | $5.25 | 100.0% |
-| `demo-sloppy__canonical__r1` | submitted | 107 | 19 min | $6.94 | 91.1% |
-| `demo-sloppy__canonical__r2` | submitted | 92 | 36 min | $2.63 | 90.7% |
-| `demo-sloppy__canonical__r3` | max_tool_calls | 88 | 71 min | $4.14 | 86.3% |
-| `demo-careful__variant_v__r1` | submitted | 92 | 72 min | $5.30 | 100.0% |
-| `demo-careful__variant_v__r2` | max_tool_calls | 54 | 65 min | $1.99 | 85.0% |
-| `demo-careful__variant_v__r3` | submitted | 127 | 13 min | $8.71 | 99.0% |
-| `demo-memorizer__variant_v__r1` | submitted | 43 | 18 min | $4.72 | 50.3% |
-| `demo-memorizer__variant_v__r2` | max_tool_calls | 41 | 78 min | $10.94 | 50.3% |
-| `demo-memorizer__variant_v__r3` | max_tool_calls | 145 | 38 min | $7.40 | 54.2% |
-| `demo-sloppy__variant_v__r1` | submitted | 139 | 68 min | $2.48 | 88.7% |
-| `demo-sloppy__variant_v__r2` | max_tool_calls | 42 | 83 min | $8.59 | 92.5% |
-| `demo-sloppy__variant_v__r3` | max_tool_calls | 75 | 78 min | $6.54 | 80.0% |
+Each run's `viewer.html` (open locally in a browser) shows every test's expected vs actual state and frames.
+
+| Run | End | Tool calls | Time | Cost | Overall | Details |
+|---|---|---|---|---|---|---|
+| `demo-careful__canonical__r1` | submitted | 77 | 61 min | $2.39 | 100.0% | [viewer](../../results/demo_runs/demo-careful__canonical__r1/viewer.html) |
+| `demo-careful__canonical__r2` | max_tool_calls | 35 | 22 min | $2.51 | 100.0% | [viewer](../../results/demo_runs/demo-careful__canonical__r2/viewer.html) |
+| `demo-careful__canonical__r3` | max_tool_calls | 56 | 65 min | $8.06 | 95.4% | [viewer](../../results/demo_runs/demo-careful__canonical__r3/viewer.html) |
+| `demo-memorizer__canonical__r1` | max_tool_calls | 82 | 75 min | $10.92 | 100.0% | [viewer](../../results/demo_runs/demo-memorizer__canonical__r1/viewer.html) |
+| `demo-memorizer__canonical__r2` | submitted | 122 | 26 min | $8.29 | 98.7% | [viewer](../../results/demo_runs/demo-memorizer__canonical__r2/viewer.html) |
+| `demo-memorizer__canonical__r3` | submitted | 134 | 19 min | $5.25 | 100.0% | [viewer](../../results/demo_runs/demo-memorizer__canonical__r3/viewer.html) |
+| `demo-sloppy__canonical__r1` | submitted | 107 | 19 min | $6.94 | 91.1% | [viewer](../../results/demo_runs/demo-sloppy__canonical__r1/viewer.html) |
+| `demo-sloppy__canonical__r2` | submitted | 92 | 36 min | $2.63 | 90.7% | [viewer](../../results/demo_runs/demo-sloppy__canonical__r2/viewer.html) |
+| `demo-sloppy__canonical__r3` | max_tool_calls | 88 | 71 min | $4.14 | 86.3% | [viewer](../../results/demo_runs/demo-sloppy__canonical__r3/viewer.html) |
+| `demo-careful__variant_v__r1` | submitted | 92 | 72 min | $5.30 | 100.0% | [viewer](../../results/demo_runs/demo-careful__variant_v__r1/viewer.html) |
+| `demo-careful__variant_v__r2` | max_tool_calls | 54 | 65 min | $1.99 | 85.0% | [viewer](../../results/demo_runs/demo-careful__variant_v__r2/viewer.html) |
+| `demo-careful__variant_v__r3` | submitted | 127 | 13 min | $8.71 | 99.0% | [viewer](../../results/demo_runs/demo-careful__variant_v__r3/viewer.html) |
+| `demo-memorizer__variant_v__r1` | submitted | 43 | 18 min | $4.72 | 50.3% | [viewer](../../results/demo_runs/demo-memorizer__variant_v__r1/viewer.html) |
+| `demo-memorizer__variant_v__r2` | max_tool_calls | 41 | 78 min | $10.94 | 50.3% | [viewer](../../results/demo_runs/demo-memorizer__variant_v__r2/viewer.html) |
+| `demo-memorizer__variant_v__r3` | max_tool_calls | 145 | 38 min | $7.40 | 54.2% | [viewer](../../results/demo_runs/demo-memorizer__variant_v__r3/viewer.html) |
+| `demo-sloppy__variant_v__r1` | submitted | 139 | 68 min | $2.48 | 88.7% | [viewer](../../results/demo_runs/demo-sloppy__variant_v__r1/viewer.html) |
+| `demo-sloppy__variant_v__r2` | max_tool_calls | 42 | 83 min | $8.59 | 92.5% | [viewer](../../results/demo_runs/demo-sloppy__variant_v__r2/viewer.html) |
+| `demo-sloppy__variant_v__r3` | max_tool_calls | 75 | 78 min | $6.54 | 80.0% | [viewer](../../results/demo_runs/demo-sloppy__variant_v__r3/viewer.html) |

@@ -6,6 +6,7 @@
 
 import argparse
 import json
+import os
 import shutil
 import statistics
 from collections import Counter, defaultdict
@@ -327,14 +328,17 @@ def mutants_section():
     return "\n".join(parts)
 
 
-def runs_section(runs):
+def runs_section(runs, out_dir):
     rows = []
     for r in sorted(runs, key=lambda r: (r.variant, r.model, r.attempt)):
         e = r.meta.get("episode") or {}
+        viewer = r.path / "viewer.html"
+        link = f"[viewer]({os.path.relpath(viewer, out_dir)})" if viewer.exists() else "–"
         rows.append([f"`{r.run_id}`", e.get("end_reason", "error"), e.get("tool_calls", "–"),
                      f"{(e.get('wall_clock_s') or 0) / 60:.0f} min", f"${e.get('cost_usd', 0):.2f}",
-                     pct(r.scores["overall"], 1)])
-    return "## All runs\n\n" + table(["Run", "End", "Tool calls", "Time", "Cost", "Overall"], rows)
+                     pct(r.scores["overall"], 1), link])
+    return ("## All runs\n\nEach run's `viewer.html` (open locally in a browser) shows every test's expected vs "
+            "actual state and frames.\n\n" + table(["Run", "End", "Tool calls", "Time", "Cost", "Overall", "Details"], rows))
 
 
 def build_report(runs_dir, out_path, title="CHIP-8 Eval — Results", intro=None, include_smoke=False):
@@ -368,7 +372,7 @@ def build_report(runs_dir, out_path, title="CHIP-8 Eval — Results", intro=None
         sections.append(memorization_section(groups))
     sections.append(mutants_section())
     if runs:
-        sections.append(runs_section(runs))
+        sections.append(runs_section(runs, out_path.parent))
     out_path.write_text("\n\n".join(s.rstrip() for s in sections) + "\n")
     return out_path
 
