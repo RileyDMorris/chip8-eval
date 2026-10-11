@@ -9,7 +9,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+anthropic = ["anthropic>=1.0"]
+dev = ["pytest>=8", "anthropic>=1.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

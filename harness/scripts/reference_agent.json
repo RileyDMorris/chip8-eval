@@ -1,0 +1,10 @@
+{
+  "description": "Scripted 'agent' for pipeline smoke tests: looks around, writes the bundled reference emulator for the run's variant, runs the public tests, submits. Needs no API key.",
+  "turns": [
+    {"text": "Let me look at the task.", "tool_calls": [{"name": "bash", "args": {"command": "ls -la && ls public_tests | head"}}]},
+    {"text": "", "tool_calls": [{"name": "read_file", "args": {"path": "prompt.md"}}]},
+    {"text": "Writing the emulator.", "tool_calls": [{"name": "write_file", "args": {"path": "emulator.py", "content": {"$reference": "{variant}"}}}]},
+    {"text": "", "tool_calls": [{"name": "bash", "args": {"command": "python run_public_tests.py"}}]},
+    {"text": "All public tests pass.", "tool_calls": [{"name": "submit", "args": {}}]}
+  ]
+}

@@ -1,0 +1,73 @@
+# Models and budgets for harness/run_eval.py.
+#
+# provider: anthropic | openai (Responses API) | openai_chat | gemini (OpenAI-compatible endpoint)
+#           | openrouter | openai_compat (set base_url) | scripted (no API; replays a script)
+# API keys are read on the host from the env var named by the provider (see .env.example);
+# they are never passed into a sandbox.
+#
+# price: USD per million tokens, used for the cost budget and the report. Verify against the
+# providers' pricing pages before a real run (model IDs and prices checked 2026-10-11).
+
+defaults:
+  runs: 3                   # K attempts per model per variant
+  variants: [canonical, variant_v]
+  budget:
+    max_tool_calls: 150
+    max_wall_clock_s: 7200  # 2 hours
+    max_cost_usd: 30
+    max_no_tool_turns: 3
+  sandbox:
+    cpus: 2
+    memory: 2g
+
+models:
+  - name: claude-opus-5-5
+    provider: anthropic
+    model: claude-opus-5-5
+    effort: high            # output_config.effort (Opus 5.5 defaults to medium)
+    max_output_tokens: 64000
+    price: {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}
+
+  - name: gpt-6-astra
+    provider: openai        # Responses API; reasoning items are passed back each turn
+    model: gpt-6-astra
+    params:
+      reasoning: {effort: high}
+    max_output_tokens: 64000
+    price: {input: 10.0, output: 50.0, cache_read: 1.0}
+
+  - name: gemini-3.1-pro
+    provider: gemini        # Gemini's OpenAI-compatible Chat Completions endpoint
+    model: gemini-3.1-pro-preview
+    params:
+      reasoning_effort: high
+    max_output_tokens: 32000
+    price: {input: 2.0, output: 12.0, cache_read: 0.20}
+
+  # Cheaper alternatives (uncomment to use):
+  # - name: claude-sonnet-5-5
+  #   provider: anthropic
+  #   model: claude-sonnet-5-5
+  #   effort: high
+  #   price: {input: 2.0, output: 10.0, cache_read: 0.20, cache_write: 2.5}
+  # - name: gpt-6.1-sol
+  #   provider: openai
+  #   model: gpt-6.1-sol
+  #   params: {reasoning: {effort: high}}
+  #   price: {input: 2.0, output: 10.0}
+  # - name: gemini-3.8-flash
+  #   provider: gemini
+  #   model: gemini-3.8-flash
+  #   params: {reasoning_effort: high}
+  #   price: {input: 0.75, output: 3.75, cache_read: 0.075}
+  # Any model through OpenRouter:
+  # - name: some-model
+  #   provider: openrouter
+  #   model: vendor/model-id
+  #   price: {input: 1.0, output: 4.0}
+
+  # Pipeline smoke test without any API key: writes the bundled reference as emulator.py.
+  - name: scripted-reference
+    provider: scripted
+    script: harness/scripts/reference_agent.json
+    smoke_only: true        # excluded from the default model list; select with --models scripted-reference
