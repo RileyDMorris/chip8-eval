@@ -31,3 +31,16 @@ worth a second look from the owner.
 | R1 | **[review]** Repo is public, but `tests_data/hidden/` must stay hidden from agents. | Hidden tests are committed (they are deterministic outputs of `romgen/` anyway) and every generated file carries a canary string so they can be filtered from training corpora. Agents never see them: the sandbox gets only `tasks/<variant>/`, and has no network. If contamination matters more later, regenerate hidden tests with a new private seed (`romgen` takes the seed as an argument) and keep them out of git. |
 | R2 | Grading container contents | Only the candidate's `emulator.py`, the test ROMs/key files, and a driver script. **Golden outputs never enter the grading container**; comparison happens on the host. This stops a candidate from reading the answers at grade time. |
 | R3 | Commit identity | Commits use the owner's GitHub noreply address, not their personal email, since the repo is public. |
+
+## Test generation (M1)
+
+| # | Question | Decision |
+|---|---|---|
+| T1 | Is `cycles_run` part of a unit test's pass condition? | No. SPEC 6.4 lists `halted`, `halt_reason`, every `state` field and `final_frame`; `cycles_run` is not in `state`, so it is reported but not graded. (This also makes decision D2 low-stakes.) |
+| T2 | How do unit tests make "VF unchanged" bugs visible? | Every unit test starts by loading all 16 registers with random values, VF always in 2..255, so any stray 0/1 flag write changes the final state. |
+| T3 | Unit test count | 111 canonical (114 variant, adding 5XY1). Every opcode in Section 5.3 has 2-4 tests; halts cover all four reasons. |
+| T4 | Program test count | 16 programs (spec says ~15): bounce, score_counter, timer_bar, key_menu, random_dots, nested_calls, font_grid, typing, scroller, memcopy, fibonacci, collision_counter, jump_table, shift_art, maze, pong. |
+| T5 | Program checkpoints | 3-6 per program, drawn from the generator's RNG over the run, re-drawn until at least two distinct frames and at most one blank frame (so a checkpoint rarely lands in an erase/redraw gap). |
+| T6 | Public set | 6 unit tests (one each from flow, alu, memory, display, timers, input) + 2 programs (score_counter, typing), all from a separate seed. Generation asserts no public test shares ROM bytes or run arguments with a hidden test. |
+| T7 | Variant programs | The assembler's `SE`/`SNE` are semantic, so the same program generator emits 4XNN/3XNN on the variant machine and the program stays logically identical. Unit tests use raw opcodes, so they test the literal variant semantics. |
+| T8 | Attributing variant failures | Each variant test is tagged with the changes it is sensitive to (re-running it with that one change reverted gives a different output), and the reverted outputs are stored in `golden_revert/<change>/`. A candidate output that matches a reverted golden is direct evidence it used standard CHIP-8 behavior for that change. |

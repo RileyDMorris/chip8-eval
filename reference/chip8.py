@@ -62,6 +62,16 @@ VARIANT_V = Config(
 )
 CONFIGS = {CANONICAL.name: CANONICAL, VARIANT_V.name: VARIANT_V}
 
+# Each variant_v change, and the Config fields that undo it (back to canonical).
+# Used to attribute variant failures to specific changes (memorization analysis).
+VARIANT_CHANGES = {
+    "font_addr": {"font_addr": CANONICAL.font_addr},
+    "skip_swap": {"skip_swapped": CANONICAL.skip_swapped},
+    "add_vf": {"add_imm_sets_vf": CANONICAL.add_imm_sets_vf},
+    "timer_period": {"timer_period": CANONICAL.timer_period},
+    "mul": {"mul_opcode": CANONICAL.mul_opcode},
+}
+
 
 class Halt(Exception):
     def __init__(self, reason):
