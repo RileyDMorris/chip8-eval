@@ -14,9 +14,13 @@ Scores:
 """
 
 import argparse
+import itertools
 import json
 from collections import defaultdict
+from dataclasses import replace
 from pathlib import Path
+
+from reference.chip8 import CONFIGS, VARIANT_CHANGES, run
 
 STATE_FIELDS = ("v", "i", "pc", "sp", "stack", "dt", "st")
 WEIGHTS = {"unit": 0.5, "program": 0.4, "robustness": 0.1}
@@ -85,6 +89,30 @@ def output_matches(out, golden, kind):
     return all(cp["match"] for cp in program_checkpoints(out, golden))
 
 
+def explain_with_standard_behavior(suite_dir, test, out, variant):
+    """Smallest set of this test's variant changes which, reverted to standard CHIP-8
+    behavior, reproduces the candidate's graded output exactly (None if no set does).
+
+    Runs the reference in-process on the host; only used for failed variant tests.
+    """
+    changes = test.get("variant_changes") or []
+    if not changes or out is None:
+        return None
+    rom = (Path(suite_dir) / test["rom"]).read_bytes()
+    keys = json.loads((Path(suite_dir) / test["keys"]).read_text()) if test["keys"] else []
+    base = CONFIGS[variant]
+    for size in range(1, len(changes) + 1):
+        for subset in itertools.combinations(changes, size):
+            fields = {}
+            for change in subset:
+                fields.update(VARIANT_CHANGES[change])
+            config = replace(base, name="explain", **fields)
+            expected = run(rom, test["cycles"], keys=keys, seed=test["seed"], frames_at=test["frames_at"], config=config)
+            if output_matches(out, expected, test["kind"]):
+                return list(subset)
+    return None
+
+
 def _rate(passed, total):
     return round(passed / total, 4) if total else None
 
@@ -100,7 +128,7 @@ def score_suite(suite_dir, outputs):
     unit_passed = unit_total = cp_matched = cp_total = robust = 0
     accuracies = []
     by_program = {}
-    change_stats = defaultdict(lambda: {"tests": 0, "passed": 0, "matches_reverted": 0})
+    change_stats = defaultdict(lambda: {"tests": 0, "passed": 0, "explained_by_standard": 0})
 
     for test in manifest["tests"]:
         golden = json.loads((golden_dir / f"{test['id']}.json").read_text())
@@ -134,16 +162,17 @@ def score_suite(suite_dir, outputs):
             record["checkpoints"] = checkpoints
             record["passed"] = matched == len(checkpoints)
             by_program[test["id"]] = {"matched": matched, "total": len(checkpoints)}
-        # variant memorization analysis: did a failure match standard CHIP-8 behavior?
+        # variant memorization analysis: is a failure exactly standard CHIP-8 behavior?
+        explained = None
+        if not record["passed"] and test.get("variant_changes"):
+            explained = explain_with_standard_behavior(suite_dir, test, out, manifest["variant"])
+            if explained:
+                record["explained_by_standard"] = explained
         for change in test.get("variant_changes", []):
             stats = change_stats[change]
             stats["tests"] += 1
             stats["passed"] += record["passed"]
-            if not record["passed"] and out is not None:
-                reverted = json.loads((suite_dir / "golden_revert" / change / f"{test['id']}.json").read_text())
-                if output_matches(out, reverted, test["kind"]):
-                    stats["matches_reverted"] += 1
-                    record.setdefault("matches_reverted", []).append(change)
+            stats["explained_by_standard"] += bool(explained and change in explained)
         per_test.append(record)
 
     total_tests = len(manifest["tests"])

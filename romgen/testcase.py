@@ -7,9 +7,9 @@ On-disk layout of a suite (``tests_data/<split>/<variant>/``)::
     keys/<id>.json       key events (only for tests that have them)
     golden/<id>.json     expected CLI output from the reference emulator
 
-Variant suites also carry ``golden_revert/<change>/<id>.json``: the output the
-test would produce if that one variant change were reverted to canonical
-behavior (only stored where it differs from the golden output).
+Variant suites tag each test with ``variant_changes``: the changes whose
+reversal to standard CHIP-8 behavior would alter the graded output. The grader
+uses the tags to attribute failures (grader/score.py).
 """
 
 import json
@@ -95,9 +95,6 @@ def write_suite(directory, tests, variant, split, golden_dir="golden", with_reve
                 reverted = test.run(revert_config(config, change))
                 if graded_view(reverted, test.kind) != graded_view(golden, test.kind):
                     changes.append(change)
-                    out = directory / "golden_revert" / change / f"{test.id}.json"
-                    out.parent.mkdir(parents=True, exist_ok=True)
-                    out.write_text(json.dumps(reverted) + "\n")
             test.variant_changes = changes
         entry = asdict(test)
         entry["rom"] = f"roms/{test.id}.ch8"

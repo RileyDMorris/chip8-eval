@@ -43,7 +43,7 @@ worth a second look from the owner.
 | T5 | Program checkpoints | 3-6 per program, drawn from the generator's RNG over the run, re-drawn until at least two distinct frames and at most one blank frame (so a checkpoint rarely lands in an erase/redraw gap). |
 | T6 | Public set | 6 unit tests (one each from flow, alu, memory, display, timers, input) + 2 programs (score_counter, typing), all from a separate seed. Generation asserts no public test shares ROM bytes or run arguments with a hidden test. |
 | T7 | Variant programs | The assembler's `SE`/`SNE` are semantic, so the same program generator emits 4XNN/3XNN on the variant machine and the program stays logically identical. Unit tests use raw opcodes, so they test the literal variant semantics. |
-| T8 | Attributing variant failures | Each variant test is tagged with the changes it is sensitive to (re-running it with that one change reverted gives a different output), and the reverted outputs are stored in `golden_revert/<change>/`. A candidate output that matches a reverted golden is direct evidence it used standard CHIP-8 behavior for that change. |
+| T8 | Attributing variant failures | Each variant test is tagged with the changes it is sensitive to (re-running it with that one change reverted changes the graded output). At grading time, for each failed variant test the host re-runs the reference with every subset of the test's changes reverted and records the smallest subset that reproduces the candidate's output exactly: direct evidence the candidate used standard CHIP-8 behavior for those changes. (An earlier version stored single-change reverted goldens; that missed failures caused by several changes at once.) |
 
 ## Grader (M2)
 
@@ -69,3 +69,11 @@ worth a second look from the owner.
 | H6 | Tool semantics | `bash` exit codes are reported in the output, not as tool errors; `read_file`/`write_file` paths are normalized and must stay inside `/workspace` (symlinks inside the agent's own container are not policed: it can `cat` anything there with `bash` anyway, and nothing secret is in it). `read_file` returns at most 100k characters. |
 | H7 | Sandbox hardening | `--network none`, `--cap-drop ALL`, `no-new-privileges`, non-root `agent` user, 2 CPUs / 2 GB / 256 pids. Task files are copied in as a tar owned by `agent`; `reference/`, `tests_data/` and `grader/` never enter the image or container. Verified by `tests/test_harness.py`. |
 | H8 | M3 "one model end to end" | **Blocked on API keys.** Verified instead with (a) a scripted agent (`harness/scripts/reference_agent.json`) that drives the real sandbox, transcript, grading and results pipeline, and (b) mock HTTP servers that check each provider client's exact request/response handling (including the Anthropic SDK's streaming path). |
+
+## Report (M4 tooling)
+
+| # | Question | Decision |
+|---|---|---|
+| P1 | Heatmap format | Markdown tables with colored squares plus the number (🟩 ≥ 95%, 🟨 ≥ 75%, 🟧 ≥ 40%, 🟥 below), so the report reads on GitHub with no image tooling. |
+| P2 | "Most interesting failures" | Per model and variant, up to 3 distinct tests: near-misses first (checkpoint pixel accuracy ≥ 90% but not exact; these are the subtle bugs), then unit tests with a wrong final frame, then the worst checkpoint. PNGs are candidate / reference / diff (red = only candidate, green = only reference), written with a stdlib PNG encoder. |
+| P3 | Demo report | `report/demo/REPORT.md` is built from synthetic "models" (reference + patched-in bugs) to show the format before real runs exist. It is clearly labelled as synthetic. |

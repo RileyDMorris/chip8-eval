@@ -96,9 +96,13 @@ def test_variant_analysis_detects_standard_chip8_behavior(tmp_path):
     scores = grade(emu, "variant_v", mode="local")
     analysis = scores["variant_analysis"]
     assert scores["overall"] < 0.8
-    # a canonical emulator's failures on skip/mul tests match the reverted goldens
-    assert analysis["skip_swap"]["matches_reverted"] > 0
-    assert analysis["mul"]["matches_reverted"] == analysis["mul"]["tests"] - analysis["mul"]["passed"]
+    # every failure of a fully canonical emulator is explained by standard CHIP-8 behavior
+    # (attributed to the smallest set of reverted changes that reproduces it)
+    failed = [t for t in scores["tests"] if not t["passed"]]
+    assert failed and all(t.get("explained_by_standard") for t in failed)
+    assert analysis["mul"]["explained_by_standard"] == analysis["mul"]["tests"] - analysis["mul"]["passed"]
+    for stats in analysis.values():
+        assert stats["explained_by_standard"] <= stats["tests"] - stats["passed"]
 
 
 @pytest.mark.slow
