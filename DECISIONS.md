@@ -28,7 +28,7 @@ worth a second look from the owner.
 
 | # | Question | Decision |
 |---|---|---|
-| R1 | **[review]** Repo is public, but `tests_data/hidden/` must stay hidden from agents. | Hidden tests are committed (they are deterministic outputs of `romgen/` anyway) and every generated file carries a canary string so they can be filtered from training corpora. Agents never see them: the sandbox gets only `tasks/<variant>/`, and has no network. If contamination matters more later, regenerate hidden tests with a new private seed (`romgen` takes the seed as an argument) and keep them out of git. |
+| R1 | **[review]** Repo is public, but `tests_data/hidden/` must stay hidden from agents. | Hidden tests are committed (they are deterministic outputs of `romgen/` anyway); each suite manifest and the reference source carry a canary GUID so they can be filtered from training corpora. Agents never see them: the sandbox gets only `tasks/<variant>/`, and has no network. If contamination matters more later, regenerate hidden tests with a new private seed (`romgen` takes the seed as an argument) and keep them out of git. |
 | R2 | Grading container contents | Only the candidate's `emulator.py`, the test ROMs/key files, and a driver script. **Golden outputs never enter the grading container**; comparison happens on the host. This stops a candidate from reading the answers at grade time. |
 | R3 | Commit identity | Commits use the owner's GitHub noreply address, not their personal email, since the repo is public. |
 
@@ -44,3 +44,15 @@ worth a second look from the owner.
 | T6 | Public set | 6 unit tests (one each from flow, alu, memory, display, timers, input) + 2 programs (score_counter, typing), all from a separate seed. Generation asserts no public test shares ROM bytes or run arguments with a hidden test. |
 | T7 | Variant programs | The assembler's `SE`/`SNE` are semantic, so the same program generator emits 4XNN/3XNN on the variant machine and the program stays logically identical. Unit tests use raw opcodes, so they test the literal variant semantics. |
 | T8 | Attributing variant failures | Each variant test is tagged with the changes it is sensitive to (re-running it with that one change reverted gives a different output), and the reverted outputs are stored in `golden_revert/<change>/`. A candidate output that matches a reverted golden is direct evidence it used standard CHIP-8 behavior for that change. |
+
+## Grader (M2)
+
+| # | Question | Decision |
+|---|---|---|
+| G1 | How is the grading container hardened? | `--network none`, CPU/memory/pids limits, all capabilities dropped except those the driver needs to launch the candidate as an unprivileged user (`SETUID`, `SETGID`, `KILL`, `CHOWN`), `no-new-privileges`. The driver (root) streams results on its own stdout, which the candidate process cannot write to. Verified by `tests/test_grader.py::test_grading_container_isolates_candidate`. |
+| G2 | Valid JSON but non-zero exit code? | Accepted: grading is on the JSON. A crash is only recorded when stdout is not a JSON object. |
+| G3 | When is `--seed` / `--keys` / `--frames-at` passed? | Only when needed (seed != 1, keys present, checkpoints present), so the CLI defaults are part of what is tested (e.g. default seed 1). |
+| G4 | Test parallelism | 2 tests at a time inside a 2-CPU container, so a 10 s timeout is not eaten by contention. Local (trusted) mode uses 8 workers. |
+| G5 | Mutant set | 31 canonical mutants across all 9 families (the six from SPEC 7.1 plus common real-world quirks: COSMAC shift/logic quirks, BNNN VX quirk, FX1E VF quirk, wrap-vs-clip, FX0A highest key, ...) and 4 more on variant_v, plus 5 "revert" mutants on variant_v that each restore one standard CHIP-8 behavior. All detected in their own family. |
+| G6 | Variant tests tagged by the graded fields only | A change "affects" a test only if reverting it changes what the grader compares (unit: halted, halt_reason, state, final_frame; program: checkpoint frames). |
+| G7 | **[review]** Font relocation was weakly tested | A variant emulator that keeps the standard font at 0x050 *and* a matching FX29 draws correct glyphs, so only `I` values reveal it. Added font-in-memory unit tests (FX65 / DRW from the raw font address) and a `font_dump` program that copies font bytes out of memory, on both machines. |

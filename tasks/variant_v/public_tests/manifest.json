@@ -47,7 +47,7 @@
    "opcode": "DXYN",
    "description": "DRW VF, VY uses VF as X before writing the flag",
    "rom": "roms/public_unit_display_DXYN_vf_coordinate.ch8",
-   "cycles": 24,
+   "cycles": 23,
    "seed": 1,
    "keys": null,
    "frames_at": []
@@ -59,7 +59,7 @@
    "opcode": "FX18",
    "description": "ST counts down like DT",
    "rom": "roms/public_unit_timers_FX18_countdown.ch8",
-   "cycles": 43,
+   "cycles": 51,
    "seed": 1,
    "keys": null,
    "frames_at": []
@@ -71,7 +71,7 @@
    "opcode": "EXA1",
    "description": "no skip when the key is down",
    "rom": "roms/public_unit_input_EXA1_down.ch8",
-   "cycles": 25,
+   "cycles": 22,
    "seed": 1,
    "keys": "keys/public_unit_input_EXA1_down.json",
    "frames_at": []

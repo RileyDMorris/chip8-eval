@@ -990,13 +990,43 @@
    "variant_changes": []
   },
   {
+   "id": "unit_memory_FONT_load_bytes",
+   "kind": "unit",
+   "family": "memory",
+   "opcode": "FONT",
+   "description": "FX65 reads the 5 font bytes of digit 4 from memory",
+   "rom": "roms/unit_memory_FONT_load_bytes.ch8",
+   "cycles": 24,
+   "seed": 1,
+   "keys": null,
+   "frames_at": [],
+   "variant_changes": [
+    "font_addr"
+   ]
+  },
+  {
+   "id": "unit_memory_FONT_draw_raw_address",
+   "kind": "unit",
+   "family": "memory",
+   "opcode": "FONT",
+   "description": "draw digit 9 from its raw font address",
+   "rom": "roms/unit_memory_FONT_draw_raw_address.ch8",
+   "cycles": 20,
+   "seed": 1,
+   "keys": null,
+   "frames_at": [],
+   "variant_changes": [
+    "font_addr"
+   ]
+  },
+  {
    "id": "unit_display_00E0_draw_clear_draw",
    "kind": "unit",
    "family": "display",
    "opcode": "00E0",
    "description": "only the sprite drawn after CLS remains",
    "rom": "roms/unit_display_00E0_draw_clear_draw.ch8",
-   "cycles": 30,
+   "cycles": 29,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1024,7 +1054,7 @@
    "opcode": "DXYN",
    "description": "draw a font digit",
    "rom": "roms/unit_display_DXYN_font_digit.ch8",
-   "cycles": 23,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1037,9 +1067,9 @@
    "kind": "unit",
    "family": "display",
    "opcode": "DXYN",
-   "description": "draw a 11-row sprite from ROM",
+   "description": "draw a 7-row sprite from ROM",
    "rom": "roms/unit_display_DXYN_rom_sprite.ch8",
-   "cycles": 23,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1065,7 +1095,7 @@
    "opcode": "DXYN",
    "description": "draw without erasing sets VF = 0",
    "rom": "roms/unit_display_DXYN_no_collision.ch8",
-   "cycles": 26,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1078,7 +1108,7 @@
    "opcode": "DXYN",
    "description": "pixels past x = 63 are clipped, not wrapped",
    "rom": "roms/unit_display_DXYN_clip_right.ch8",
-   "cycles": 23,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1091,7 +1121,7 @@
    "opcode": "DXYN",
    "description": "rows past y = 31 are clipped, not wrapped",
    "rom": "roms/unit_display_DXYN_clip_bottom.ch8",
-   "cycles": 24,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1104,7 +1134,7 @@
    "opcode": "DXYN",
    "description": "start position wraps (VX % 64, VY % 32)",
    "rom": "roms/unit_display_DXYN_wrap_start.ch8",
-   "cycles": 24,
+   "cycles": 22,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1117,7 +1147,7 @@
    "opcode": "DXYN",
    "description": "N = 0 draws nothing and sets VF = 0",
    "rom": "roms/unit_display_DXYN_zero_rows.ch8",
-   "cycles": 19,
+   "cycles": 22,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1130,7 +1160,7 @@
    "opcode": "DXYN",
    "description": "DRW VF, VY uses VF as X before writing the flag",
    "rom": "roms/unit_display_DXYN_vf_coordinate.ch8",
-   "cycles": 24,
+   "cycles": 21,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1141,15 +1171,13 @@
    "kind": "unit",
    "family": "timers",
    "opcode": "FX07",
-   "description": "read DT 34 cycles after setting it",
+   "description": "read DT 26 cycles after setting it",
    "rom": "roms/unit_timers_FX07_after_ticks.ch8",
-   "cycles": 56,
+   "cycles": 51,
    "seed": 1,
    "keys": null,
    "frames_at": [],
-   "variant_changes": [
-    "timer_period"
-   ]
+   "variant_changes": []
   },
   {
    "id": "unit_timers_FX07_same_window",
@@ -1158,7 +1186,7 @@
    "opcode": "FX07",
    "description": "read DT 0 cycles after setting it",
    "rom": "roms/unit_timers_FX07_same_window.ch8",
-   "cycles": 29,
+   "cycles": 28,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1171,7 +1199,7 @@
    "opcode": "FX15",
    "description": "DT set on a tick cycle is decremented at the end of that cycle",
    "rom": "roms/unit_timers_FX15_set_on_tick.ch8",
-   "cycles": 29,
+   "cycles": 26,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1186,7 +1214,7 @@
    "opcode": "FX15",
    "description": "busy-wait until DT reaches 0, counting iterations",
    "rom": "roms/unit_timers_FX15_countdown.ch8",
-   "cycles": 66,
+   "cycles": 43,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1203,13 +1231,11 @@
    "opcode": "FX15",
    "description": "a second FX15 replaces DT",
    "rom": "roms/unit_timers_FX15_overwrite.ch8",
-   "cycles": 34,
+   "cycles": 38,
    "seed": 1,
    "keys": null,
    "frames_at": [],
-   "variant_changes": [
-    "timer_period"
-   ]
+   "variant_changes": []
   },
   {
    "id": "unit_timers_FX18_countdown",
@@ -1218,7 +1244,7 @@
    "opcode": "FX18",
    "description": "ST counts down like DT",
    "rom": "roms/unit_timers_FX18_countdown.ch8",
-   "cycles": 54,
+   "cycles": 61,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1231,7 +1257,7 @@
    "opcode": "FX18",
    "description": "ST stops at 0 while DT keeps counting",
    "rom": "roms/unit_timers_FX18_independent.ch8",
-   "cycles": 78,
+   "cycles": 73,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1272,7 +1298,7 @@
    "opcode": "EX9E",
    "description": "key number is VX & 0xF",
    "rom": "roms/unit_input_EX9E_masked.ch8",
-   "cycles": 25,
+   "cycles": 24,
    "seed": 1,
    "keys": "keys/unit_input_EX9E_masked.json",
    "frames_at": [],
@@ -1311,7 +1337,7 @@
    "opcode": "EXA1",
    "description": "a pressed-then-released key is up",
    "rom": "roms/unit_input_EXA1_released.ch8",
-   "cycles": 20,
+   "cycles": 22,
    "seed": 1,
    "keys": "keys/unit_input_EXA1_released.json",
    "frames_at": [],
@@ -1324,7 +1350,7 @@
    "opcode": "FX0A",
    "description": "returns immediately when a key is already down",
    "rom": "roms/unit_input_FX0A_already_down.ch8",
-   "cycles": 24,
+   "cycles": 20,
    "seed": 1,
    "keys": "keys/unit_input_FX0A_already_down.json",
    "frames_at": [],
@@ -1337,7 +1363,7 @@
    "opcode": "FX0A",
    "description": "repeats until a key goes down; DT keeps ticking",
    "rom": "roms/unit_input_FX0A_waits.ch8",
-   "cycles": 60,
+   "cycles": 53,
    "seed": 1,
    "keys": "keys/unit_input_FX0A_waits.json",
    "frames_at": [],
@@ -1350,7 +1376,7 @@
    "opcode": "FX0A",
    "description": "several keys down -> lowest-numbered key",
    "rom": "roms/unit_input_FX0A_lowest.ch8",
-   "cycles": 31,
+   "cycles": 23,
    "seed": 1,
    "keys": "keys/unit_input_FX0A_lowest.json",
    "frames_at": [],
@@ -1376,7 +1402,7 @@
    "opcode": "CXNN",
    "description": "four draws with the default seed 1",
    "rom": "roms/unit_random_CXNN_default_seed.ch8",
-   "cycles": 23,
+   "cycles": 24,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1389,8 +1415,8 @@
    "opcode": "CXNN",
    "description": "three draws with a non-default seed",
    "rom": "roms/unit_random_CXNN_seeded.ch8",
-   "cycles": 22,
-   "seed": 83734816,
+   "cycles": 26,
+   "seed": 1097007449,
    "keys": null,
    "frames_at": [],
    "variant_changes": []
@@ -1402,8 +1428,8 @@
    "opcode": "CXNN",
    "description": "draws masked with 00, 0F, F0 and a random mask",
    "rom": "roms/unit_random_CXNN_masks.ch8",
-   "cycles": 22,
-   "seed": 1260940478,
+   "cycles": 27,
+   "seed": 1472612885,
    "keys": null,
    "frames_at": [],
    "variant_changes": []
@@ -1413,10 +1439,10 @@
    "kind": "unit",
    "family": "random",
    "opcode": "CXNN",
-   "description": "XOR of 104 draws checks the whole sequence",
+   "description": "XOR of 55 draws checks the whole sequence",
    "rom": "roms/unit_random_CXNN_stream.ch8",
-   "cycles": 542,
-   "seed": 1837820213,
+   "cycles": 297,
+   "seed": 291307920,
    "keys": null,
    "frames_at": [],
    "variant_changes": [
@@ -1429,9 +1455,9 @@
    "kind": "unit",
    "family": "halt",
    "opcode": "invalid",
-   "description": "invalid opcode 5785 halts",
+   "description": "invalid opcode 5F66 halts",
    "rom": "roms/unit_halt_invalid_5xyn.ch8",
-   "cycles": 37,
+   "cycles": 36,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1442,9 +1468,9 @@
    "kind": "unit",
    "family": "halt",
    "opcode": "invalid",
-   "description": "invalid opcode 8208 halts",
+   "description": "invalid opcode 88BF halts",
    "rom": "roms/unit_halt_invalid_8xyn.ch8",
-   "cycles": 26,
+   "cycles": 36,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1455,9 +1481,9 @@
    "kind": "unit",
    "family": "halt",
    "opcode": "invalid",
-   "description": "invalid opcode 909D halts",
+   "description": "invalid opcode 90AF halts",
    "rom": "roms/unit_halt_invalid_9xyn.ch8",
-   "cycles": 30,
+   "cycles": 37,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1468,9 +1494,9 @@
    "kind": "unit",
    "family": "halt",
    "opcode": "invalid",
-   "description": "invalid opcode E5D2 halts",
+   "description": "invalid opcode EE5D halts",
    "rom": "roms/unit_halt_invalid_exnn.ch8",
-   "cycles": 36,
+   "cycles": 38,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1481,9 +1507,9 @@
    "kind": "unit",
    "family": "halt",
    "opcode": "invalid",
-   "description": "invalid opcode F67B halts",
+   "description": "invalid opcode F66B halts",
    "rom": "roms/unit_halt_invalid_fxnn.ch8",
-   "cycles": 31,
+   "cycles": 38,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1496,7 +1522,7 @@
    "opcode": "stack",
    "description": "the 17th nested call halts with stack_overflow",
    "rom": "roms/unit_halt_stack_overflow.ch8",
-   "cycles": 44,
+   "cycles": 37,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1509,7 +1535,7 @@
    "opcode": "stack",
    "description": "a return with an empty stack halts",
    "rom": "roms/unit_halt_stack_underflow.ch8",
-   "cycles": 39,
+   "cycles": 24,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1522,7 +1548,7 @@
    "opcode": "pc",
    "description": "zeroed memory runs as no-ops until PC reaches 0x1000",
    "rom": "roms/unit_halt_pc_run_off_end.ch8",
-   "cycles": 64,
+   "cycles": 67,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1535,7 +1561,7 @@
    "opcode": "pc",
    "description": "BNNN target beyond 0xFFF halts on the next cycle",
    "rom": "roms/unit_halt_pc_bnnn_overflow.ch8",
-   "cycles": 35,
+   "cycles": 31,
    "seed": 1,
    "keys": null,
    "frames_at": [],
@@ -1577,7 +1603,6 @@
     4634
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap",
     "timer_period"
    ]
@@ -1620,7 +1645,6 @@
     1528
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap"
    ]
   },
@@ -1643,7 +1667,6 @@
     1835
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap"
    ]
   },
@@ -1664,7 +1687,6 @@
     6363
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap",
     "timer_period"
    ]
@@ -1688,9 +1710,7 @@
     778
    ],
    "variant_changes": [
-    "font_addr",
-    "skip_swap",
-    "add_vf"
+    "skip_swap"
    ]
   },
   {
@@ -1711,7 +1731,6 @@
     1243
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap"
    ]
   },
@@ -1774,7 +1793,6 @@
     3299
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap",
     "timer_period"
    ]
@@ -1796,7 +1814,6 @@
     1794
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap"
    ]
   },
@@ -1816,7 +1833,6 @@
     2882
    ],
    "variant_changes": [
-    "font_addr",
     "skip_swap"
    ]
   },
@@ -1836,8 +1852,7 @@
     2072
    ],
    "variant_changes": [
-    "skip_swap",
-    "add_vf"
+    "skip_swap"
    ]
   },
   {
@@ -1879,6 +1894,29 @@
    "variant_changes": [
     "skip_swap",
     "timer_period"
+   ]
+  },
+  {
+   "id": "program_font_dump",
+   "kind": "program",
+   "family": "program",
+   "opcode": "",
+   "description": "font bytes copied from memory, inverted, and drawn",
+   "rom": "roms/program_font_dump.ch8",
+   "cycles": 2204,
+   "seed": 1,
+   "keys": null,
+   "frames_at": [
+    422,
+    898,
+    944,
+    1464,
+    1678,
+    2204
+   ],
+   "variant_changes": [
+    "font_addr",
+    "skip_swap"
    ]
   }
  ]

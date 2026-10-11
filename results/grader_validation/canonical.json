@@ -1,0 +1,454 @@
+{
+ "variant": "canonical",
+ "mode": "local",
+ "reference_overall": 1.0,
+ "mutants": [
+  {
+   "name": "alu_8xy5_flag_gt",
+   "family": "alu",
+   "description": "8XY5 sets VF with > instead of >=",
+   "overall": 0.9956,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.9615,
+   "families_hit": [
+    "alu"
+   ],
+   "detected": true
+  },
+  {
+   "name": "alu_flag_before_result",
+   "family": "alu",
+   "description": "8XY4/5/6/7/E write VF before the result",
+   "overall": 0.9779,
+   "unit_score": 0.9558,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.8077,
+   "families_hit": [
+    "alu"
+   ],
+   "detected": true
+  },
+  {
+   "name": "alu_shift_uses_vy",
+   "family": "alu",
+   "description": "8XY6/8XYE shift VY into VX (COSMAC quirk)",
+   "overall": 0.9665,
+   "unit_score": 0.9646,
+   "program_score": 0.9605,
+   "robustness": 1.0,
+   "family_rate": 0.8462,
+   "families_hit": [
+    "alu"
+   ],
+   "detected": true
+  },
+  {
+   "name": "alu_logic_resets_vf",
+   "family": "alu",
+   "description": "8XY1/2/3 reset VF to 0 (COSMAC quirk)",
+   "overall": 0.969,
+   "unit_score": 0.9381,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.7692,
+   "families_hit": [
+    "alu",
+    "random"
+   ],
+   "detected": true
+  },
+  {
+   "name": "display_wrap_not_clip",
+   "family": "display",
+   "description": "sprites wrap around the edges instead of clipping",
+   "overall": 0.9333,
+   "unit_score": 0.9823,
+   "program_score": 0.8553,
+   "robustness": 1.0,
+   "family_rate": 0.8182,
+   "families_hit": [
+    "display"
+   ],
+   "detected": true
+  },
+  {
+   "name": "display_no_start_wrap",
+   "family": "display",
+   "description": "DXYN start position is not wrapped (off-screen sprites vanish)",
+   "overall": 0.949,
+   "unit_score": 0.9823,
+   "program_score": 0.8947,
+   "robustness": 1.0,
+   "family_rate": 0.8182,
+   "families_hit": [
+    "display"
+   ],
+   "detected": true
+  },
+  {
+   "name": "display_vf_untouched",
+   "family": "display",
+   "description": "DXYN never writes the collision flag",
+   "overall": 0.8943,
+   "unit_score": 0.8938,
+   "program_score": 0.8684,
+   "robustness": 1.0,
+   "family_rate": 0.0,
+   "families_hit": [
+    "display",
+    "memory"
+   ],
+   "detected": true
+  },
+  {
+   "name": "display_cls_noop",
+   "family": "display",
+   "description": "00E0 does not clear the screen",
+   "overall": 0.9333,
+   "unit_score": 0.9823,
+   "program_score": 0.8553,
+   "robustness": 1.0,
+   "family_rate": 0.8182,
+   "families_hit": [
+    "display"
+   ],
+   "detected": true
+  },
+  {
+   "name": "memory_fx55_increments_i",
+   "family": "memory",
+   "description": "FX55 leaves I = I + X + 1",
+   "overall": 0.9288,
+   "unit_score": 0.9735,
+   "program_score": 0.8553,
+   "robustness": 1.0,
+   "family_rate": 0.75,
+   "families_hit": [
+    "memory"
+   ],
+   "detected": true
+  },
+  {
+   "name": "memory_fx65_increments_i",
+   "family": "memory",
+   "description": "FX65 leaves I = I + X + 1",
+   "overall": 0.9513,
+   "unit_score": 0.9027,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.0833,
+   "families_hit": [
+    "memory"
+   ],
+   "detected": true
+  },
+  {
+   "name": "memory_bcd_reversed",
+   "family": "memory",
+   "description": "FX33 stores the digits ones-first",
+   "overall": 0.9394,
+   "unit_score": 0.9735,
+   "program_score": 0.8816,
+   "robustness": 1.0,
+   "family_rate": 0.75,
+   "families_hit": [
+    "memory"
+   ],
+   "detected": true
+  },
+  {
+   "name": "memory_unmasked",
+   "family": "memory",
+   "description": "memory addresses are not masked to 12 bits",
+   "overall": 0.9948,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 0.9923,
+   "family_rate": 0.9167,
+   "families_hit": [
+    "memory"
+   ],
+   "detected": true
+  },
+  {
+   "name": "timers_period_off_by_one",
+   "family": "timers",
+   "description": "timers tick every 9 cycles (7 on variant_v)",
+   "overall": 0.8524,
+   "unit_score": 0.9469,
+   "program_score": 0.6974,
+   "robustness": 1.0,
+   "family_rate": 0.2857,
+   "families_hit": [
+    "input",
+    "timers"
+   ],
+   "detected": true
+  },
+  {
+   "name": "timers_tick_before_execute",
+   "family": "timers",
+   "description": "timers tick at the start of the cycle instead of the end",
+   "overall": 0.9543,
+   "unit_score": 0.9823,
+   "program_score": 0.9079,
+   "robustness": 1.0,
+   "family_rate": 0.7143,
+   "families_hit": [
+    "timers"
+   ],
+   "detected": true
+  },
+  {
+   "name": "timers_st_frozen",
+   "family": "timers",
+   "description": "the sound timer never counts down",
+   "overall": 0.9912,
+   "unit_score": 0.9823,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.7143,
+   "families_hit": [
+    "timers"
+   ],
+   "detected": true
+  },
+  {
+   "name": "random_ignores_seed",
+   "family": "random",
+   "description": "CXNN ignores --seed (always seed 1)",
+   "overall": 0.9236,
+   "unit_score": 0.9735,
+   "program_score": 0.8421,
+   "robustness": 1.0,
+   "family_rate": 0.25,
+   "families_hit": [
+    "random"
+   ],
+   "detected": true
+  },
+  {
+   "name": "random_low_bits",
+   "family": "random",
+   "description": "rand() returns the low byte of the state",
+   "overall": 0.9191,
+   "unit_score": 0.9646,
+   "program_score": 0.8421,
+   "robustness": 1.0,
+   "family_rate": 0.0,
+   "families_hit": [
+    "random"
+   ],
+   "detected": true
+  },
+  {
+   "name": "input_fx0a_highest_key",
+   "family": "input",
+   "description": "FX0A picks the highest-numbered key",
+   "overall": 0.9903,
+   "unit_score": 0.9912,
+   "program_score": 0.9868,
+   "robustness": 1.0,
+   "family_rate": 0.9,
+   "families_hit": [
+    "input"
+   ],
+   "detected": true
+  },
+  {
+   "name": "input_key_unmasked",
+   "family": "input",
+   "description": "EX9E/EXA1 index keys with VX instead of VX & 0xF",
+   "overall": 0.9948,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 0.9923,
+   "family_rate": 0.9,
+   "families_hit": [
+    "input"
+   ],
+   "detected": true
+  },
+  {
+   "name": "input_skip_ops_swapped",
+   "family": "input",
+   "description": "EX9E and EXA1 swapped",
+   "overall": 0.9208,
+   "unit_score": 0.9469,
+   "program_score": 0.8684,
+   "robustness": 1.0,
+   "family_rate": 0.4,
+   "families_hit": [
+    "input"
+   ],
+   "detected": true
+  },
+  {
+   "name": "flow_call_pushes_old_pc",
+   "family": "flow",
+   "description": "2NNN pushes the address of the call itself",
+   "overall": 0.7156,
+   "unit_score": 0.9469,
+   "program_score": 0.3553,
+   "robustness": 1.0,
+   "family_rate": 0.8182,
+   "families_hit": [
+    "flow",
+    "halt"
+   ],
+   "detected": true
+  },
+  {
+   "name": "flow_bnnn_uses_vx",
+   "family": "flow",
+   "description": "BNNN adds VX instead of V0 (SUPER-CHIP quirk)",
+   "overall": 0.9551,
+   "unit_score": 0.9735,
+   "program_score": 0.9211,
+   "robustness": 1.0,
+   "family_rate": 0.9091,
+   "families_hit": [
+    "flow",
+    "halt"
+   ],
+   "detected": true
+  },
+  {
+   "name": "flow_3xnn_inverted",
+   "family": "flow",
+   "description": "3XNN skips on the wrong condition",
+   "overall": 0.6322,
+   "unit_score": 0.9381,
+   "program_score": 0.1579,
+   "robustness": 1.0,
+   "family_rate": 0.8182,
+   "families_hit": [
+    "flow",
+    "load",
+    "random",
+    "timers"
+   ],
+   "detected": true
+  },
+  {
+   "name": "load_7xnn_sets_vf",
+   "family": "load",
+   "description": "7XNN writes a carry flag",
+   "overall": 0.9646,
+   "unit_score": 0.9292,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.6667,
+   "families_hit": [
+    "flow",
+    "load",
+    "random",
+    "timers"
+   ],
+   "detected": true
+  },
+  {
+   "name": "load_fx1e_sets_vf",
+   "family": "load",
+   "description": "FX1E sets VF when I passes 0xFFF (Amiga quirk)",
+   "overall": 0.9867,
+   "unit_score": 0.9735,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.75,
+   "families_hit": [
+    "load"
+   ],
+   "detected": true
+  },
+  {
+   "name": "load_i_12_bit",
+   "family": "load",
+   "description": "FX1E wraps I at 12 bits",
+   "overall": 0.9956,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.9167,
+   "families_hit": [
+    "load"
+   ],
+   "detected": true
+  },
+  {
+   "name": "load_fx29_other_base",
+   "family": "load",
+   "description": "FX29 uses the other machine's font base",
+   "overall": 0.7823,
+   "unit_score": 0.9646,
+   "program_score": 0.5,
+   "robustness": 1.0,
+   "family_rate": 0.8333,
+   "families_hit": [
+    "display",
+    "load"
+   ],
+   "detected": true
+  },
+  {
+   "name": "halt_invalid_is_noop",
+   "family": "halt",
+   "description": "invalid opcodes are ignored",
+   "overall": 0.9779,
+   "unit_score": 0.9558,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.4444,
+   "families_hit": [
+    "halt"
+   ],
+   "detected": true
+  },
+  {
+   "name": "halt_stack_limit_17",
+   "family": "halt",
+   "description": "stack overflow only at 17 entries",
+   "overall": 0.9956,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.8889,
+   "families_hit": [
+    "halt"
+   ],
+   "detected": true
+  },
+  {
+   "name": "halt_pc_wraps",
+   "family": "halt",
+   "description": "PC wraps at 0x1000 instead of halting",
+   "overall": 0.9912,
+   "unit_score": 0.9823,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.7778,
+   "families_hit": [
+    "halt"
+   ],
+   "detected": true
+  },
+  {
+   "name": "halt_underflow_ignored",
+   "family": "halt",
+   "description": "00EE with an empty stack is a no-op",
+   "overall": 0.9956,
+   "unit_score": 0.9912,
+   "program_score": 1.0,
+   "robustness": 1.0,
+   "family_rate": 0.8889,
+   "families_hit": [
+    "halt"
+   ],
+   "detected": true
+  }
+ ],
+ "failures": []
+}

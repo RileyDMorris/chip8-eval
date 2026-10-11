@@ -538,6 +538,25 @@ def gen_fx65(rng, cfg):
     return out
 
 
+def gen_font_memory(rng, cfg):
+    """The font bytes live at the machine's font address (read without FX29)."""
+    out = []
+    p = new(cfg)
+    digit = rng.randint(0, 15)
+    prologue(p, rng, i=cfg.font_addr + 5 * digit)
+    p.LD(V[4], MEM_I)
+    end(p)
+    out.append(Spec("load_bytes", f"FX65 reads the 5 font bytes of digit {digit:X} from memory", p))
+    p = new(cfg)
+    x, y = _xy(rng)
+    digit = rng.randint(0, 15)
+    prologue(p, rng, fixed={x: rng.randint(0, 56), y: rng.randint(0, 26)}, i=cfg.font_addr + 5 * digit)
+    p.DRW(V[x], V[y], 5)
+    end(p)
+    out.append(Spec("draw_raw_address", f"draw digit {digit:X} from its raw font address", p))
+    return out
+
+
 # ---------------------------------------------------------------- display
 
 def _sprite_data(rng, rows):
@@ -951,6 +970,7 @@ GENERATORS = [
     ("memory", "FX33", gen_fx33, None),
     ("memory", "FX55", gen_fx55, None),
     ("memory", "FX65", gen_fx65, None),
+    ("memory", "FONT", gen_font_memory, None),
     ("display", "00E0", gen_00e0, None),
     ("display", "DXYN", gen_dxyn, None),
     ("timers", "FX07", gen_fx07, None),

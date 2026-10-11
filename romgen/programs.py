@@ -733,6 +733,49 @@ def prog_pong(rng, cfg):
     return ProgramSpec("pong", "pong with scripted paddles, scores and DT pacing", p, t_end + rng.randint(100, 400), keys=events)
 
 
+def prog_font_dump(rng, cfg):
+    """Copy the font out of memory with FX65/FX55, invert it, and draw inverse-video digits."""
+    p = Asm(cfg)
+    buf = rng.randrange(0x900, 0xE00, 16)
+    p.LD(V8, rng.randint(0, 15))    # first digit
+    p.LD(V9, 0)                     # x
+    p.LD(VA, rng.randint(0, 4))     # y
+    p.LD(VB, 0xFF)
+    p.label("digit")
+    p.LD(VC, V8)
+    p.LD(VD, 0x0F)
+    p.AND(VC, VD)
+    p.LD(I, cfg.font_addr)
+    p.LD(VD, 5)
+    p.label("index")                # I += 5 * digit, by repeated addition
+    p.SE(VC, 0)
+    p.JP("step")
+    p.JP("copy")
+    p.label("step")
+    p.ADD(I, VD)
+    p.ADD(VC, 0xFF)
+    p.JP("index")
+    p.label("copy")
+    p.LD(V4, MEM_I)
+    for r in range(5):
+        p.XOR(V[r], VB)
+    p.LD(I, buf)
+    p.LD(MEM_I, V4)
+    p.DRW(V9, VA, 5)
+    p.ADD(V9, 8)
+    p.ADD(V8, rng.randint(1, 5))
+    p.SE(V9, 64)
+    p.JP("digit")
+    p.LD(V9, 0)
+    p.ADD(VA, 6)
+    p.SE(VA, 30)
+    p.JP("digit")
+    p.CLS()
+    p.LD(VA, 0)
+    p.JP("digit")
+    return ProgramSpec("font_dump", "font bytes copied from memory, inverted, and drawn", p, rng.randint(1500, 3000))
+
+
 PROGRAMS = [
     prog_bounce,
     prog_score_counter,
@@ -750,6 +793,7 @@ PROGRAMS = [
     prog_shift_art,
     prog_maze,
     prog_pong,
+    prog_font_dump,
 ]
 
 

@@ -63,6 +63,13 @@ def cycles_until_pc(rom, target_pc, config, keys=(), seed=1, limit=200_000):
     raise RuntimeError(f"PC never reached {target_pc:#x} within {limit} cycles")
 
 
+def graded_view(result, kind):
+    """The parts of a CLI result that the grader compares (SPEC 6.4)."""
+    if kind == "unit":
+        return {k: result[k] for k in ("halted", "halt_reason", "state", "final_frame")}
+    return result["frames"]
+
+
 def revert_config(config, change):
     return replace(config, name=f"{config.name}-revert-{change}", **VARIANT_CHANGES[change])
 
@@ -86,7 +93,7 @@ def write_suite(directory, tests, variant, split, golden_dir="golden", with_reve
             changes = []
             for change in VARIANT_CHANGES:
                 reverted = test.run(revert_config(config, change))
-                if reverted != golden:
+                if graded_view(reverted, test.kind) != graded_view(golden, test.kind):
                     changes.append(change)
                     out = directory / "golden_revert" / change / f"{test.id}.json"
                     out.parent.mkdir(parents=True, exist_ok=True)
