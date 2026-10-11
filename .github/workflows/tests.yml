@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e '.[dev]'
+      - name: Build sandbox and grader images
+        run: |
+          docker build -q -f docker/agent.Dockerfile -t chip8-eval-agent:latest .
+          docker build -q -f docker/grader.Dockerfile -t chip8-eval-grader:latest .
+      - name: Run tests (reference, test generation, grader validation, harness, report)
+        run: python -m pytest -q
