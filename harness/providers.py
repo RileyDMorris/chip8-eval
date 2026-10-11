@@ -117,7 +117,7 @@ def parse_tool_args(spec_by_name, call_id, name, raw_args):
     return ToolCall(call_id, name, args if isinstance(args, dict) else {}, error=problem)
 
 
-def post_json(url, payload, headers, timeout=600, max_attempts=8, log=None):
+def post_json(url, payload, headers, timeout=900, max_attempts=8, log=None):
     """POST JSON with retries on rate limits, overloads and network errors."""
     body = json.dumps(payload).encode()
     delay = 2.0
@@ -219,9 +219,14 @@ class OpenAIChatClient:
 # ----------------------------------------------------------------------------- OpenAI Responses
 
 class OpenAIResponsesClient:
-    """OpenAI Responses API. Output items (incl. reasoning) are appended to the input list each turn."""
+    """OpenAI Responses API. Output items (incl. reasoning) are appended to the input list each turn.
 
-    def __init__(self, model, base_url, api_key, params=None, max_output_tokens=64000, store=False,
+    With ``store=True`` (default) the passed-back items resolve server-side; with
+    ``store=False`` the request asks for encrypted reasoning content so the items
+    can be replayed statelessly.
+    """
+
+    def __init__(self, model, base_url, api_key, params=None, max_output_tokens=64000, store=True,
                  extra_headers=None, log=None):
         self.model = model
         self.url = base_url.rstrip("/") + "/responses"
@@ -468,7 +473,7 @@ def make_client(model_cfg, log=None, variant="canonical"):
     base_url = model_cfg.get("base_url", defaults.get("base_url"))
     if kind == "openai_responses":
         return OpenAIResponsesClient(model_cfg["model"], base_url, api_key, params=params,
-                                     max_output_tokens=max_out or 64000, store=model_cfg.get("store", False), log=log)
+                                     max_output_tokens=max_out or 64000, store=model_cfg.get("store", True), log=log)
     return OpenAIChatClient(model_cfg["model"], base_url, api_key, params=params, max_output_tokens=max_out or 32000,
                             max_tokens_field=model_cfg.get("max_tokens_field", "max_tokens"),
                             compact_after_tokens=model_cfg.get("compact_after_tokens"), log=log)

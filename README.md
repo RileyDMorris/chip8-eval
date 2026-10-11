@@ -27,6 +27,9 @@ reference implementation:
 | Program tests | 17 longer programs (bouncing ball with collisions, BCD score counter, key-driven menu, pong, a random maze, nested subroutine rendering, ...) with scripted key presses, graded on 3–6 display frames at checkpoint cycles (76 checkpoints) | 0.4 |
 | Robustness | share of tests where the emulator produced valid JSON within the 10 s timeout | 0.1 |
 
+A stub that prints well-formed JSON without emulating anything scores 11% (almost all of it
+robustness), which is the floor.
+
 Unit tests are grouped into nine opcode families (`flow`, `alu`, `load`, `memory`, `display`,
 `timers`, `input`, `random`, `halt`) so the score has partial credit and the report shows which
 parts of the machine each model gets wrong. Each model runs K = 3 times; the report gives the mean
@@ -207,7 +210,8 @@ Useful commands (run from the repo root with the venv's `python`):
 3. Preflight (one tiny request per model, which catches bad keys, model IDs or parameters):
    `python -m harness.preflight`
 4. Run: `python -m harness.run_eval --parallel 3` (3 models × 3 runs × 2 variants = 18 runs).
-   Runs are resumable; finished runs are skipped.
+   Runs are resumable; finished runs are skipped. A run whose episode ended on an API error is
+   still graded (its end reason is recorded); `--retry-errors` re-runs those.
 5. Report: `python -m report.make_report`.
 
 Each run leaves `results/runs/<run_id>/` with `transcript.jsonl` (every message and tool call),

@@ -212,7 +212,7 @@ def test_openai_responses_client_passes_reasoning_back():
     call = {"type": "function_call", "id": "fc_1", "call_id": "call_1", "name": "bash", "arguments": '{"command": "ls"}'}
     message = {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "all done"}]}
     with MockServer([responses_output([reasoning, call]), responses_output([message])]) as server:
-        client = OpenAIResponsesClient("gpt-x", server.url, "k", params={"reasoning": {"effort": "high"}})
+        client = OpenAIResponsesClient("gpt-x", server.url, "k", params={"reasoning": {"effort": "high"}}, store=False)
         client.start("sys", "prompt", TOOLS)
         turn = client.step()
         assert turn.tool_calls[0].args == {"command": "ls"}

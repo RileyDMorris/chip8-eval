@@ -64,12 +64,20 @@ def run_id_for(model_name, variant, k, tag=None):
     return f"{tag}__{base}" if tag else base
 
 
-def run_one(model_cfg, variant, k, defaults, tag=None, force=False, results_dir=RESULTS, log=print):
+INFRA_END_REASONS = {"api_error", "error"}
+
+
+def run_one(model_cfg, variant, k, defaults, tag=None, force=False, retry_errors=False, results_dir=RESULTS,
+            log=print):
     run_id = run_id_for(model_cfg["name"], variant, k, tag)
     run_dir = Path(results_dir) / run_id
     if (run_dir / "scores.json").exists() and not force:
-        log(f"[{run_id}] already done, skipping")
-        return json.loads((run_dir / "scores.json").read_text())
+        previous = json.loads((run_dir / "meta.json").read_text()) if (run_dir / "meta.json").exists() else {}
+        end = (previous.get("episode") or {}).get("end_reason", "error")
+        if not (retry_errors and end in INFRA_END_REASONS):
+            log(f"[{run_id}] already done, skipping")
+            return json.loads((run_dir / "scores.json").read_text())
+        log(f"[{run_id}] previous attempt ended with {end}; retrying")
     run_dir.mkdir(parents=True, exist_ok=True)
     for stale in ("transcript.jsonl", "emulator.py", "outputs.json", "scores.json", "meta.json"):
         (run_dir / stale).unlink(missing_ok=True)
@@ -156,6 +164,8 @@ def main(argv=None):
     parser.add_argument("--parallel", type=int, default=1, help="concurrent runs")
     parser.add_argument("--tag", help="prefix for run ids (e.g. a date) to keep separate result sets")
     parser.add_argument("--force", action="store_true", help="redo runs that already have scores")
+    parser.add_argument("--retry-errors", action="store_true",
+                        help="redo finished runs whose episode ended on an API/infrastructure error")
     args = parser.parse_args(argv)
 
     load_dotenv()
@@ -173,7 +183,8 @@ def main(argv=None):
     def job(spec):
         model_cfg, variant, k = spec
         try:
-            return run_one(model_cfg, variant, k, defaults, tag=args.tag, force=args.force)
+            return run_one(model_cfg, variant, k, defaults, tag=args.tag, force=args.force,
+                           retry_errors=args.retry_errors)
         except Exception:
             print(f"[{model_cfg['name']} {variant} r{k}] crashed:\n{traceback.format_exc()}", file=sys.stderr)
             return None
