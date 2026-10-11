@@ -103,13 +103,12 @@ def run_one(model_cfg, variant, k, defaults, tag=None, force=False, retry_errors
     episode = None
     error = None
     sandbox = Sandbox(cpus=sandbox_cfg.get("cpus", 2), memory=sandbox_cfg.get("memory", "2g"))
+    transcript = Transcript(transcript_path)
     try:
         sandbox.start()
         sandbox.copy_task(task_dir)
-        transcript = Transcript(transcript_path)
         client = make_client(model_cfg, log=transcript.log, variant=variant)
-        transcript.close()
-        episode = run_episode(client, sandbox, prompt, budget=budget, price=price, transcript_path=transcript_path)
+        episode = run_episode(client, sandbox, prompt, budget=budget, price=price, transcript=transcript)
         have_emulator = sandbox.copy_out("emulator.py", run_dir / "emulator.py")
     except ProviderError as e:
         error = f"provider setup failed: {e}"
@@ -118,6 +117,7 @@ def run_one(model_cfg, variant, k, defaults, tag=None, force=False, retry_errors
         error = traceback.format_exc()
         have_emulator = sandbox.started and _try_copy_out(sandbox, run_dir)
     finally:
+        transcript.close()
         sandbox.stop()
 
     meta["episode"] = episode

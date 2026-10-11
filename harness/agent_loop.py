@@ -72,7 +72,7 @@ class Transcript:
         self.file = open(path, "a", buffering=1) if path else None
 
     def log(self, event):
-        if self.file:
+        if self.file and not self.file.closed:
             event = {"t": round(time.time(), 3), **event}
             self.file.write(json.dumps(event, default=str) + "\n")
 
@@ -107,11 +107,17 @@ def execute_tool(sandbox, call):
         return f"Error: tool failed: {e!r}", True, False
 
 
-def run_episode(client, sandbox, prompt, budget=None, price=None, transcript_path=None, clock=time.monotonic):
-    """Drive one episode to completion. Returns a JSON-serializable summary."""
+def run_episode(client, sandbox, prompt, budget=None, price=None, transcript_path=None, transcript=None,
+                clock=time.monotonic):
+    """Drive one episode to completion. Returns a JSON-serializable summary.
+
+    Pass either ``transcript_path`` (the episode owns the file) or an open
+    ``transcript`` shared with the client's own logging (the caller closes it).
+    """
     budget = budget or Budget()
     price = price or Price()
-    transcript = Transcript(transcript_path)
+    owns_transcript = transcript is None
+    transcript = transcript or Transcript(transcript_path)
     start = clock()
     usage = Usage()
     tool_calls = 0
@@ -210,5 +216,6 @@ def run_episode(client, sandbox, prompt, budget=None, price=None, transcript_pat
             "cost_usd": round(price.cost(usage), 4),
         }
         transcript.log({"type": "end", **summary})
-        transcript.close()
+        if owns_transcript:
+            transcript.close()
     return summary

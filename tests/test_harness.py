@@ -354,3 +354,19 @@ def test_end_to_end_scripted_run(tmp_path):
     assert scores["overall"] == 1.0
     meta = json.loads((run_dir / "meta.json").read_text())
     assert meta["episode"]["end_reason"] == "submitted"
+
+
+def test_client_retries_are_logged_in_the_episode_transcript(tmp_path):
+    """Regression: the client's log callback must write into the live episode transcript."""
+    from harness.agent_loop import Transcript
+
+    responses = [error_response(429, "slow down", headers={"retry-after": "0"}),
+                 chat_tool_call([("submit", {})])]
+    with MockServer(responses) as server:
+        transcript = Transcript(tmp_path / "t.jsonl")
+        client = OpenAIChatClient("m", server.url, "k", log=transcript.log)
+        summary = run_episode(client, FakeSandbox(), "x", transcript=transcript)
+        transcript.close()
+    assert summary["end_reason"] == "submitted"
+    kinds = [json.loads(line)["type"] for line in (tmp_path / "t.jsonl").read_text().splitlines()]
+    assert kinds.count("retry") == 1 and kinds[0] == "start" and kinds[-1] == "end"

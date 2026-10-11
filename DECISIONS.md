@@ -77,3 +77,12 @@ worth a second look from the owner.
 | P1 | Heatmap format | Markdown tables with colored squares plus the number (🟩 ≥ 95%, 🟨 ≥ 75%, 🟧 ≥ 40%, 🟥 below), so the report reads on GitHub with no image tooling. |
 | P2 | "Most interesting failures" | Per model and variant, up to 3 distinct tests: near-misses first (checkpoint pixel accuracy ≥ 90% but not exact; these are the subtle bugs), then unit tests with a wrong final frame, then the worst checkpoint. PNGs are candidate / reference / diff (red = only candidate, green = only reference), written with a stdlib PNG encoder. |
 | P3 | Demo report | `report/demo/REPORT.md` is built from synthetic "models" (reference + patched-in bugs) to show the format before real runs exist. It is clearly labelled as synthetic. |
+
+## Optional extension: Kubernetes sandboxes (not built)
+
+| # | Finding | Status |
+|---|---|---|
+| K1 | **[review]** The local Docker Desktop cluster (`docker-desktop`, kindnet CNI) **does not enforce NetworkPolicies**: a pod selected by a deny-all policy still reached 1.1.1.1 and resolved DNS. Running agent sandboxes as Jobs there with only a NetworkPolicy would break the "no network" rule. | Measured 2026-10-11 |
+| K2 | Local images are visible to the cluster through Docker Desktop's registry mirror when `imagePullPolicy` is `IfNotPresent` or `Always` (not `Never`). | Measured |
+| K3 | A CNI-independent way to cut a pod off: an init container with `NET_ADMIN` runs `ip link set eth0 down` in the pod's network namespace before the agent container (no capabilities) starts; `kubectl exec` goes through the kubelet, not the pod network. | Proposed. Creating such pods was blocked by the session's permission policy, so the backend is not built. Needs the owner's go-ahead. |
+| K4 | Leftovers from probing: namespace `chip8-probe` (a `deny-all` NetworkPolicy and three finished `sleep` pods). | Cleanup was also blocked; remove with `kubectl delete namespace chip8-probe`. |
